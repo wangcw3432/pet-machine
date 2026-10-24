@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1460" viewBox="0 0 1600 1460" role="img" aria-labelledby="title desc">
+<title id="title">月湾 MOONCOVE 自动猫粮投喂器：电子架构与关键连接</title>
+<desc id="desc">原型级电路示意，含12V电源保护、双降压电源、ESP32主控、DRV8876驱动、ADS1232称重和硬件开盖联锁。不是可投板的完整原理图。</desc>
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#49705b"/></marker>
+  <style>
+    text{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;fill:#263e32}
+    .h{font-size:27px;font-weight:600}.label{font-size:19px;font-weight:600}.t{font-size:17px}.s{font-size:14px;fill:#637765}
+    .box{fill:#fffefa;stroke:#aabdab;stroke-width:1.6;rx:12}.chip{fill:#e0e9dd;stroke:#79967b;stroke-width:1.8;rx:12}
+    .wire{fill:none;stroke:#49705b;stroke-width:2.4;marker-end:url(#arrow)}.line{fill:none;stroke:#49705b;stroke-width:2.2}
+    .power{fill:none;stroke:#ba8644;stroke-width:3;marker-end:url(#arrow)}.warn{fill:#895c31;font-size:15px}
+  </style>
+</defs>
+<rect width="1600" height="1460" fill="#f5f4ed"/>
+<text x="60" y="62" class="h">MOONCOVE / 月湾 · 电子架构与关键连接</text>
+<text x="60" y="94" class="s">V0.1 · 2026-10-24 · 原型设计输入 / 非完整制造原理图 · 箭头表示电源或信号流向</text>
+<rect x="1190" y="35" width="350" height="60" rx="10" fill="#eee1cd"/>
+<text x="1210" y="61" class="warn">仅使用外置隔离 12V 适配器</text>
+<text x="1210" y="82" class="warn">未包含主电源备份；原型禁止无人值守</text>
+
+<text x="60" y="143" class="label">01 / 总体架构</text>
+<rect x="60" y="175" width="210" height="96" class="box"/>
+<text x="82" y="212" class="label">12V DC / 2A</text><text x="82" y="240" class="s">合规外置隔离适配器</text>
+<path d="M270 223H320" class="power"/>
+<rect x="320" y="175" width="245" height="96" class="box"/>
+<text x="340" y="210" class="label">输入保护</text><text x="340" y="236" class="t">F1 → 反接保护 → TVS</text><text x="340" y="258" class="s">器件额定值及浪涌需协调</text>
+<path d="M565 223H680" class="power"/><text x="580" y="210" class="s">12V_P</text>
+<rect x="680" y="175" width="260" height="96" class="chip"/>
+<text x="702" y="209" class="label">DRV8876 H 桥</text><text x="702" y="236" class="t">电流检测 / 限流 / 正反转</text><text x="702" y="258" class="s">散热能力按实际负载验证</text>
+<path d="M940 223H1010" class="power"/>
+<rect x="1010" y="175" width="250" height="96" class="box"/>
+<text x="1030" y="209" class="label">12V 减速电机</text><text x="1030" y="236" class="t">分格转子 + 霍尔定位</text><text x="1030" y="258" class="s">先测启动、堵转电流和扭矩</text>
+<path d="M602 223V328H680" class="power"/>
+<rect x="680" y="294" width="260" height="72" class="box"/>
+<text x="700" y="324" class="label">TPS54302-A → 5V_A</text><text x="700" y="349" class="s">模拟电源 / 桥激励，目标 0.2A</text>
+<path d="M940 328H1010" class="power"/>
+<rect x="1010" y="294" width="250" height="72" class="chip"/>
+<text x="1030" y="324" class="label">ADS1232 + 称重桥</text><text x="1030" y="349" class="s">AVDD 5V / DVDD 3.3V</text>
+<path d="M602 328V420H680" class="power"/>
+<rect x="680" y="387" width="260" height="72" class="box"/>
+<text x="700" y="417" class="label">TPS54302-D → 3V3</text><text x="700" y="442" class="s">主控 / 数字逻辑，瞬态 ≥1A</text>
+<path d="M940 420H1010" class="power"/>
+<rect x="1010" y="387" width="250" height="96" class="chip"/>
+<text x="1030" y="421" class="label">ESP32-S3-WROOM-1</text><text x="1030" y="448" class="t">本地排程 / 事件去重 / Wi-Fi</text><text x="1030" y="471" class="s">联网不是定时投喂的前提</text>
+<path d="M1260 330H1300V415H1260" class="wire"/>
+<text x="1309" y="357" class="s">DOUT</text><text x="1309" y="377" class="s">SCLK / PDWN</text>
+<rect x="60" y="307" width="240" height="76" class="box"/>
+<text x="80" y="340" class="label">顶盖 + 转子盒联锁</text><text x="80" y="365" class="s">直接门控 nSLEEP，默认停机</text>
+<path d="M300 345H345V286H760V271" class="wire"/>
+<rect x="60" y="407" width="240" height="76" class="box"/>
+<text x="80" y="440" class="label">RTC / IR / 碗在位</text><text x="80" y="465" class="s">RTC 电池只走时，不驱动电机</text>
+<path d="M300 446H345V510H1135V483" class="wire"/>
+<path d="M1010 461H970V280H885V271" class="wire"/>
+<text x="710" y="492" class="s">PWM / ENABLE → 驱动；FAULT / 电流 → MCU</text>
+<text x="60" y="548" class="s">所有 GND 共地。图中未逐一绘制各模块电源与去耦；电机回流不能穿过称重模拟区。橙色：电源；绿色：逻辑。</text>
+
+<path d="M60 575H1540" stroke="#c7d0c1"/>
+<text x="60" y="616" class="label">02 / 称重模拟前端：比率测量，数字电平保持 3.3V</text>
+<rect x="70" y="650" width="220" height="206" class="box"/>
+<text x="90" y="688" class="label">2kg 全桥传感器</text><text x="90" y="715" class="s">标称灵敏度 2mV/V</text>
+<text x="90" y="748" class="t">E+ / E−</text><text x="90" y="784" class="t">S+ / S−</text>
+<text x="90" y="826" class="s">机械隔离及过载限位</text>
+<rect x="620" y="650" width="345" height="250" class="chip"/>
+<text x="645" y="686" class="label">ADS1232</text>
+<text x="645" y="726" class="t">REFP / REFN ← E+ / E−</text>
+<text x="645" y="766" class="t">AINP1</text><text x="645" y="807" class="t">AINN1</text>
+<text x="645" y="844" class="s">GAIN1=1 / GAIN0=1 / SPEED=0</text><text x="645" y="872" class="s">TEMP=0 / A0=0；10SPS，增益128</text>
+<path d="M290 739H353V676H620" class="power"/><text x="365" y="665" class="s">E+ = 5V_A；E− = AGND</text>
+<path d="M290 770H400" class="line"/><rect x="400" y="761" width="68" height="18" fill="#fff" stroke="#49705b"/>
+<text x="403" y="750" class="s">100Ω</text><path d="M468 770H620" class="wire"/>
+<path d="M290 806H400" class="line"/><rect x="400" y="797" width="68" height="18" fill="#fff" stroke="#49705b"/>
+<text x="403" y="840" class="s">100Ω</text><path d="M468 806H620" class="wire"/>
+<path d="M526 770V784M514 784H538M514 792H538M526 792V806" class="line"/>
+<text x="545" y="793" class="s">10nF</text>
+<path d="M965 734H1070" class="wire"/>
+<rect x="1070" y="650" width="460" height="250" class="box"/>
+<text x="1094" y="687" class="label">主控连接及布局要求</text>
+<text x="1094" y="726" class="t">GPIO10 ← DRDY/DOUT</text><text x="1094" y="758" class="t">GPIO11 → SCLK；GPIO12 → PDWN</text>
+<text x="1094" y="793" class="t">AVDD = 5V_A；DVDD = 3.3V</text><text x="1094" y="825" class="s">模拟输入双绞 / 屏蔽，远离电机与开关节点</text>
+<text x="1094" y="853" class="s">CAP、内部时钟接法与去耦遵循官方典型电路</text><text x="1094" y="881" class="s">只在停机且碗稳定时进行补粮判断</text>
+
+<path d="M60 938H1540" stroke="#c7d0c1"/>
+<text x="60" y="980" class="label">03 / 硬件联锁：开盖或拆盒直接禁用电机驱动</text>
+<text x="70" y="1028" class="t">3V3</text><path d="M125 1021H205" class="line"/>
+<circle cx="205" cy="1021" r="4" fill="#49705b"/><circle cx="272" cy="1021" r="4" fill="#49705b"/>
+<path d="M205 1021L259 995M272 1021H380" class="line"/><text x="180" y="1063" class="s">SW_LID</text>
+<circle cx="380" cy="1021" r="4" fill="#49705b"/><circle cx="447" cy="1021" r="4" fill="#49705b"/>
+<path d="M380 1021L434 995M447 1021H645V1055H760" class="wire"/><text x="344" y="1063" class="s">SW_CARTRIDGE</text>
+<text x="512" y="1008" class="s">GUARD_OK → GPIO9</text>
+<path d="M558 1021V1090" class="line"/><rect x="549" y="1090" width="18" height="49" fill="#fff" stroke="#49705b"/>
+<text x="578" y="1120" class="s">10kΩ</text><path d="M558 1139V1160M540 1160H576M546 1166H570M552 1172H564" class="line"/>
+<rect x="760" y="1011" width="285" height="145" class="chip"/>
+<text x="785" y="1044" class="label">SN74LVC1G08</text><text x="785" y="1076" class="t">A AND B</text><text x="785" y="1105" class="s">VCC = 3.3V，100nF 去耦</text><text x="785" y="1132" class="s">低电平 → 驱动休眠</text>
+<path d="M295 1195H696V1118H760" class="wire"/><text x="70" y="1200" class="t">GPIO6 / MCU_ENABLE</text>
+<text x="350" y="1222" class="s">100kΩ 下拉，启动默认关闭</text>
+<path d="M1045 1070H1160" class="wire"/>
+<rect x="1160" y="1011" width="370" height="145" class="box"/>
+<text x="1183" y="1048" class="label">DRV8876 nSLEEP</text><text x="1183" y="1080" class="t">外加 100kΩ 下拉</text>
+<text x="1183" y="1110" class="s">IN1/IN2 各 100kΩ 下拉</text><text x="1183" y="1138" class="s">nFAULT 通过 10kΩ 上拉至 3.3V</text>
+<text x="70" y="1261" class="s">开关符号画的是未装妥状态：只有装妥才闭合。此回路不能覆盖开关粘连、短路、MCU 卡高等全部故障。</text>
+<rect x="60" y="1290" width="1480" height="126" rx="12" fill="#ece3d3"/>
+<text x="82" y="1323" class="label">投板前必须补齐</text>
+<text x="82" y="1355" class="t">完整符号引脚与封装核对、PMODE / IMODE / VREF / R_IPROPI 定值、两路降压电感与补偿应用条件、去耦与保护协调。</text>
+<text x="82" y="1384" class="t">独立超时切断评估、全部连接器定义、ERC / DRC、PCB 回流与散热、称重标定、连续粮道和防探爪验证。详见设计说明。</text>
+</svg>
